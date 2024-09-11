@@ -6,6 +6,7 @@ import { Routes } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 import { AuthProvider } from './context/authContext'
 import AuthForm from './components/pages/auth'
+import BatchDashboard from './components/pages/group'
 function App() {
 
   return (
@@ -14,6 +15,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<AuthForm/>} />
+      <Route path="/group/:groupId" element={<BatchDashboard/>} />
     </Routes>
     </BrowserRouter>
     </AuthProvider>

@@ -4,14 +4,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/authContext'; // Import the auth context
+import { User } from 'lucide-react';
+import { PassThrough } from 'stream';
 
 const AuthForm: React.FC = () => {
   const { isLoggedIn, setLoggedIn } = useAuth(); // Access the global login state
   const [isLogin, setIsLogin] = useState(true); // Toggle between login/signup form
-
+  const [signupData,setSignupData] = useState({
+    username: "",
+    email: "",
+    password:""
+  })
+  const [loginData,setLoginData] = useState({
+    email:"",
+    password:""
+  })
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Perform authentication logic here (e.g., call to API, etc.)
+
     setLoggedIn(true); // Set the global state to logged in after successful authentication
   };
 
@@ -25,13 +35,13 @@ const AuthForm: React.FC = () => {
         {!isLogin && (
           <div className="mb-4">
             <Label htmlFor="username">Username</Label>
-            <Input type="text" id="username" placeholder="Enter your username" />
+            <Input type="text" id="username" placeholder="Enter your username" onChange={(e)=>setSignupData({...signupData,username:e.target.value})} />
           </div>
         )}
 
         <div className="mb-4">
           <Label htmlFor="email">Email</Label>
-          <Input type="email" id="email" placeholder="Enter your email" />
+          <Input type="email" id="email" placeholder="Enter your email" onChange={(e)=>setSignupData({...signupData,email:e.target.value})}/>
         </div>
 
         <div className="mb-4">

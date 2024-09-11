@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 
 export const Navbar = () => {
   const { isLoggedIn,setLoggedIn } = useAuth();
-    setLoggedIn(true);
+    setLoggedIn(false);
     const navigate = useNavigate();
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         navigate('/auth');
