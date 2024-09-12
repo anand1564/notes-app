@@ -12,6 +12,31 @@ export const Home = () => {
         name:"",
         password:""
     })
+    const [joinData,setJoinData] = useState({
+        group_id:"",
+        password:""
+    })
+    const handleJoin = async(e:React.FormEvent)=>{
+        e.preventDefault();
+        try{
+            const response = await fetch("http://localhost:3000/api/group/join",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(joinData)
+            })
+            if(response.ok){
+                const data = await response.json();
+                const groupId:string = data.group.id;
+                navigate(`/group/${groupId}`);
+            }else{
+                console.log("Error joining group");
+            }
+        }catch(err){
+            console.error(`Error: ${err}`);
+        }
+    }
     const handleCreate=async (e:React.FormEvent)=>{
         e.preventDefault();
         try{
@@ -24,7 +49,7 @@ export const Home = () => {
         })
         if(response.ok){
             const data = await response.json();
-            const groupId = data.id;
+            const groupId = data.group.id;
             navigate(`/group/${groupId}`)
         }else{
             console.log("Error creating group");
@@ -91,6 +116,7 @@ export const Home = () => {
                                                 id="groupId"
                                                 type="text"
                                                 placeholder="Enter group ID"
+                                                onChange={(e)=>setJoinData({...joinData,group_id:e.target.value})}
                                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
                                             />
                                         </div>
@@ -100,10 +126,11 @@ export const Home = () => {
                                                 id="password"
                                                 type="password"
                                                 placeholder="Enter password"
+                                                onChange={(e)=>setJoinData({...joinData,password:e.target.value})}
                                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
                                             />
                                         </div>
-                                        <Button type="submit" className="w-full">Join</Button>
+                                        <Button type="submit" className="w-full" onClick={handleJoin}>Join</Button>
                                     </form>
                                 </TabsContent>
                             </div>

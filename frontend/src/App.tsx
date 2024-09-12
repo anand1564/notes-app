@@ -15,7 +15,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<AuthForm/>} />
-      <Route path="/group/:groupId" element={<BatchDashboard/>} />
+      <Route path="/group/:group_id" element={<BatchDashboard/>} />
     </Routes>
     </BrowserRouter>
     </AuthProvider>
