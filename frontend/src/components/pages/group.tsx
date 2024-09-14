@@ -17,7 +17,7 @@ interface Note {
   id: string;
   title: string;
   description: string;
-  pdf_url: string;
+  pdf: string;
   subject_id: string;
 }
 
@@ -28,10 +28,11 @@ const BatchDashboard: React.FC = () => {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [newNote, setNewNote] = useState({
     title: "",
     description: "",
-    pdf_url: ""
+    pdf: ""
   });
 
   const fetchWithTimeout = async (url: string, options: RequestInit, timeout: number) => {
@@ -42,11 +43,16 @@ const BatchDashboard: React.FC = () => {
       )
     ]);
   };
+  useEffect(() => {
+    if (selectedSubject) {
+      fetchNotes(selectedSubject.id);
+    }
+  }, [selectedSubject]);
   
   const fetchNotes = async (subjectId: string) => {
     try {
       console.log(`Fetching notes for subject: ${subjectId}`);
-      const response = await fetchWithTimeout(`http://localhost:3000/api/notes/${group_id}/${subjectId}/get`, {}, 10000); // 10 seconds timeout
+      const response = await fetchWithTimeout(`http://localhost:3000/api/notes/${group_id}/${subjectId}/get`, {}, 30000); // 10 seconds timeout
   
       if (response.ok) {
         const data: Note[] = await response.json();
@@ -63,12 +69,6 @@ const BatchDashboard: React.FC = () => {
     }
   };
   
-
-  useEffect(() => {
-    if (selectedSubject) {
-      fetchNotes(selectedSubject.id);
-    }
-  }, [selectedSubject]);
 
   const fetchSubjects = async () => {
     if (group_id) {
@@ -98,21 +98,25 @@ const BatchDashboard: React.FC = () => {
   }, [group_id]);
 
   const handleAddNote = async () => {
-    if (newNote.title.trim() !== "" && newNote.description.trim() !== "" && selectedSubject) {
+    if (newNote.title.trim() !== "" && newNote.description.trim() !== "" && selectedSubject && selectedFile) {
       try {
-        console.log("Adding new Note",newNote);;
+        const formData = new FormData();
+        formData.append('title', newNote.title);
+        formData.append('description', newNote.description);
+        formData.append('pdf', selectedFile); // Ensure this name matches 'pdf'
+  
         const response = await fetch(`http://localhost:3000/api/notes/${group_id}/${selectedSubject.id}/create`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(newNote)
+          body: formData
         });
+  
         if (response.ok) {
-          const newNoteData: Note = await response.json();
+          window.alert("New notes added, please refresh.");
+          const newNoteData = await response.json();
           console.log('New note added:', newNoteData);
           setNotes(prevNotes => [...prevNotes, newNoteData]);
-          setNewNote({ title: "", description: "", pdf_url: "" });
+          setNewNote({ title: "", description: "", pdf: "" }); // Reset the note
+          setSelectedFile(null); // Reset the file
           setError(null);
         } else {
           const errorText = await response.text();
@@ -123,8 +127,12 @@ const BatchDashboard: React.FC = () => {
         console.error(`Error creating note: ${error}`);
         setError(`Failed to create note: ${error}`);
       }
+    } else {
+      setError('Please fill all fields and upload a file.');
     }
   };
+  
+  
 
   const handleAddSubject = async () => {
     if (newSubject.trim() !== '' && group_id) {
@@ -157,13 +165,13 @@ const BatchDashboard: React.FC = () => {
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File uploaded:', event.target.files?.[0]);
     const file = event.target.files?.[0];
     if (file) {
-      setNewNote(prev => ({ ...prev, pdf_url: file.name }));
+      setSelectedFile(file); // Save the file in state
+      setNewNote(prev => ({ ...prev, pdf: file.name })); // Update the note state if needed
     }
-  };
-
+  };  
+  
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -232,6 +240,7 @@ const BatchDashboard: React.FC = () => {
                 />
                 <Input
                   type="file"
+                  name="pdf"
                   onChange={handleFileUpload}
                   accept=".pdf,.doc,.docx,.txt"
                   className="mb-2"
@@ -251,8 +260,8 @@ const BatchDashboard: React.FC = () => {
                       <li key={note.id} className="mb-2">
                         <h3 className="font-bold">{note.title}</h3>
                         <p>{note.description}</p>
-                        {note.pdf_url && (
-                          <a href={`http://localhost:3000/uploads/${note.pdf_url}`} target="_blank" rel="noopener noreferrer">
+                        {note.pdf && (
+                          <a href={`http://localhost:3000/uploads/${note.pdf}`} target="_blank" rel="noopener noreferrer">
                             View PDF
                           </a>
                         )}
