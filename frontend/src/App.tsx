@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Routes } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 import { AuthProvider } from './context/authContext'
-import AuthForm from './components/pages/auth'
+// import AuthForm from './components/pages/auth'
 import BatchDashboard from './components/pages/group'
 function App() {
 
@@ -14,7 +14,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/auth" element={<AuthForm/>} />
+      {/* <Route path="/auth" element={<AuthForm/>} /> */}
       <Route path="/group/:group_id" element={<BatchDashboard/>} />
     </Routes>
     </BrowserRouter>
