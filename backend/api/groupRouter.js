@@ -1,50 +1,48 @@
+const express = require('express');
+const router=express.Router();
 
+import {Group,User} from '../models/Schema';
 
-const express=require('express');
-const router = express.Router();
-const { createClient } = require('@supabase/supabase-js');
-const supabase_url = process.env.SUPABASE_URL;  
-const supabase_key = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabase_url, supabase_key);
-
-router.post('/create',async(req,res)=>{
+router.post('/:userId/create',async (req,res)=>{
+    const {userId} = req.params;
     const {name,password} = req.body;
     try{
-        const{data,error} = await supabase.from('groups').insert([{name,password}]);
-        if(error){
-            res.status(400).json({
-                message:"Error creating group",
-            })
-        }
-        return res.json({
-            data:data.id,
-        });
-    }
-    catch(error){
-        res.json({
-            message:error.message
-        })
+        const group = new Group({name,password,users:[userId]});
+        await group.save();
+        res.send(group);
+    }catch(err){
+        res.status(411).json({message:err.message});
     }
 })
-router.post('/join', async (req, res) => {
-    const { group_id, password } = req.body;
-    try {
-        const { data, error } = await supabase
-            .from('groups')
-            .select('*')
-            .eq('id', group_id)
-            .eq('password', password)
-            .single();
-
-        if (error || !data) {
-            return res.status(400).json({ message: "Invalid group ID or password" });
+router.get('/:groupId',async (req,res)=>{
+    const {groupId} = req.params;
+    try{
+        const group = await Group.findById(groupId);
+        if(group){
+            res.send(group);
         }
-
-        // Assuming success means redirecting to the dashboard
-        return res.json({ message: "Successfully joined the group", group: data });
-    } catch (error) {
-        return res.json({ message: error.message });
+    }catch(err){
+        res.status(500).json({message:err.message});
     }
-});
-
-module.exports = router;
+})
+router.get('/all',async(req,res)=>{
+    try{
+        const groups = await Group.find();
+        res.send(groups);
+    }catch(err){
+        res.send({message:err.message});
+    }
+})
+router.get('/:groupId/users',async(req,res)=>{
+    const {groupId} = req.params;
+    try{
+        const group= await Group.findById(groupId);
+        if(!group){
+            res.status(404).json({message:"Group not found"});
+        }
+        const users = await User.find({_id:{$in:group.users}});
+        res.send(users);
+    }catch(err){
+        res.status(411).json({message:err.message});
+    }
+})

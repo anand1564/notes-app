@@ -5,6 +5,7 @@
 .env
 .env.local
 .env.*.local
+backend/.env
 
 # NPM package lock
 package-lock.json
