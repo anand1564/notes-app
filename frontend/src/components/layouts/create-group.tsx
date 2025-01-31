@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useNavigate } from "react-router-dom"
 import { Button } from "../ui/button";
-export const createGroup = () => {
+export const CreateGroup = () => {
     const navigate = useNavigate();
     const [createData, setCreateData] = useState({
         name: "",

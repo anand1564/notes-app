@@ -73,7 +73,6 @@ const noteSchema = new Schema({
     }
 });
 
-
 module.exports = {
     User: mongoose.model('User', userSchema),
     Group: mongoose.model('Group', groupSchema),
