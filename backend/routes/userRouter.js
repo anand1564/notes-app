@@ -1,65 +1,43 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const User = require('../models/index.js'); 
+
 const router = express.Router();
-const { User } = require('../models');
 
-// Create a new user
-router.post('/', async (req, res) => {
-    try {
-        const user = new User(req.body);
-        await user.save();
-        res.status(201).send(user);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
+const CLIENT_ID = '';
+const client = new OAuth2Client(CLIENT_ID);
 
-// Get all users
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find().populate('groups');
-        res.status(200).send(users);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
-
-// Get a specific user by ID
-router.get('/:id', async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id).populate('groups');
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-        res.status(200).send(user);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
-
-// Update a user
-router.put('/:id', async (req, res) => {
-    try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-        res.status(200).send(user);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
-
-// Delete a user
-router.delete('/:id', async (req, res) => {
-    try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-        res.status(200).send({ message: 'User deleted successfully' });
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
+router.post('/google/callback', async (req, res) => {
+     const { token } = req.body;
+   
+     if (!token) {
+       return res.status(400).json({ error: "Token is missing" });
+     }
+   
+     console.log("Received token:", token);
+   
+     try {
+       const ticket = await client.verifyIdToken({
+         idToken: token,
+         audience: CLIENT_ID,
+       });
+   
+       const payload = ticket.getPayload();
+       console.log("Verified Payload:", payload);
+   
+       const userId = payload['sub']; 
+       const email = payload['email'];
+       const name = payload['name'];
+   
+       console.log('User authenticated:', { userId, email, name });
+   
+       return res.status(200).json({userId, email, name});
+     } catch (error) {
+       console.error("Error verifying Google token:", error);
+       return res.status(401).json({ error: "Authentication failed" });
+     }
+   });
+   
 
 module.exports = router;

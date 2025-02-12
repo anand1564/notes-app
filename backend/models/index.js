@@ -1,25 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    groups: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Group',
-    }]
-});
+const userSchema = new mongoose.Schema({
+    googleId: { type: String, unique: true },  // Store Google user ID
+    email: { type: String, required: true, unique: true },
+    name: { type: String },
+    profilePic: { type: String }, // Optional: Store profile picture
+    createdAt: { type: Date, default: Date.now }
+  });
 
 const groupSchema = new Schema({
     name: {

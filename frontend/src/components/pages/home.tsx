@@ -5,7 +5,6 @@ import { Navbar } from "../layouts/header";
 import Features from "../layouts/features";
 import Hero from "../layouts/hero";
 import Footer from "../layouts/footer";
-import AuthForm from "../layouts/auth";
 
 export const Home = () => {
     const { isLoggedIn } = useAuth();
@@ -23,7 +22,7 @@ export const Home = () => {
            <span className="text-indigo-600">Join Now </span>to organize, upload, and access your notes anytime, anywhere!
           </h1>
                 </div>
-                <div className="md:w-1/2"><AuthForm/></div>
+                <div className="md:w-1/2"><h1>Hi</h1></div>
             </div>
             </main>
             <Footer />
