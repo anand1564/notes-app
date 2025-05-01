@@ -41,7 +41,7 @@ const GoogleSignIn: React.FC = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId="">
+    <GoogleOAuthProvider clientId="692219235059-iql0kku8osmm3i17hlljjsjfr7osdd28.apps.googleusercontent.com">
       <GoogleLogin
         onSuccess={responseGoogle}
         onError={errorGoogle}

@@ -2,12 +2,29 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
-    googleId: { type: String, unique: true },  // Store Google user ID
-    email: { type: String, required: true, unique: true },
-    name: { type: String },
-    profilePic: { type: String }, // Optional: Store profile picture
-    createdAt: { type: Date, default: Date.now }
-  });
+    id: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true // Ensure email is unique
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true // Allows multiple documents with googleId: null
+    }
+});
 
 const groupSchema = new Schema({
     name: {

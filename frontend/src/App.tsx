@@ -7,7 +7,7 @@ import { Route } from 'react-router-dom'
 import { AuthProvider } from './context/authContext'
 import BatchDashboard from './components/pages/group'
 import { CreateGroup } from './components/layouts/create-group'
-import GoogleSignIn from './components/GoogleSignIn'
+import Auth from './components/layouts/auth'
 import UploadNotes from './components/layouts/UploadNotes'
 function App() {
 
@@ -16,7 +16,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/auth" element={<GoogleSignIn />} />
+      <Route path="/auth" element={<Auth />}/>
       <Route path=':userId/create/group' element={<CreateGroup/>} />
       <Route path="/group/:group_id" element={<BatchDashboard/>} />
       <Route path='/notes' element={<UploadNotes/>} />

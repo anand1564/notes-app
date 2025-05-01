@@ -17,16 +17,16 @@ app.use(cors({
 
 app.use("/uploads", express.static("uploads"));
 
-mongoose.connect('mongodb+srv://admin:5w4-x9h9jJ2t%408A@cluster0.0blyw2r.mongodb.net/notes-app?retryWrites=true&w=majority', {
+mongoose.connect('', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 
 
-app.use('/groups', groupRoutes);
-app.use('/subjects', subjectRoutes);
-app.use('/notes', noteRoutes);
-app.use('/auth',userRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/subjects', subjectRoutes);
+app.use('/api/notes', noteRoutes);
+app.use('/api/auth',userRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
